@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Scientific Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="calculator-container">
+        <!-- Display Section -->
+        <div class="display-section">
+            <h1>🧮 Scientific Calculator</h1>
+            
+            <!-- Mode Display -->
+            <div class="mode-display">
+                <span id="angleMode">MODE: DEG</span>
+                <span id="varCount">VARS: 2</span>
+                <span id="memoryStatus">MEM: 0</span>
+            </div>
+
+            <div class="display-container">
+                <!-- Expression on top -->
+                <div class="expression" id="expression">0</div>
+                <!-- Result at bottom -->
+                <div class="result" id="result">0</div>
+            </div>
+        </div>
+
+        <!-- Main Buttons Section -->
+        <div class="main-buttons">
+            <!-- Row 1: Memory & Mode -->
+            <div class="button-row">
+                <button class="btn mem" onclick="storeMemory()">MS</button>
+                <button class="btn mem" onclick="recallMemory()">MR</button>
+                <button class="btn mem" onclick="clearMemory()">MC</button>
+                <button class="btn mode" onclick="switchAngleMode()" id="angleBtn">DEG</button>
+                <button class="btn func" onclick="showVariables()">VARS</button>
+                <button class="btn func" onclick="showHelp()">HELP</button>
+                <button class="btn clear" onclick="clearAll()">AC</button>
+                <button class="btn clear" onclick="clearDisplay()">C</button>
+                <button class="btn clear" onclick="backspace()">⌫</button>
+            </div>
+
+            <!-- Row 2: Basic Functions -->
+            <div class="button-row">
+                <button class="btn sci" onclick="appendToDisplay('sin(')">sin</button>
+                <button class="btn sci" onclick="appendToDisplay('cos(')">cos</button>
+                <button class="btn sci" onclick="appendToDisplay('tan(')">tan</button>
+                <button class="btn sci" onclick="appendToDisplay('log(')">log</button>
+                <button class="btn sci" onclick="appendToDisplay('ln(')">ln</button>
+                <button class="btn sci" onclick="appendToDisplay('sqrt(')">√</button>
+                <button class="btn sci" onclick="appendToDisplay('exp(')">exp</button>
+                <button class="btn sci" onclick="appendToDisplay('abs(')">abs</button>
+            </div>
+
+            <!-- Row 3: Advanced Functions & Constants -->
+            <div class="button-row">
+                <button class="btn func" onclick="appendToDisplay('pow(')">pow</button>
+                <button class="btn func" onclick="appendToDisplay('INT(')">INT</button>
+                <button class="btn func" onclick="appendToDisplay('MOD(')">MOD</button>
+                <button class="btn func" onclick="appendToDisplay('INV(')">INV</button>
+                <button class="btn func" onclick="appendToDisplay('ROUND(')">ROUND</button>
+                <button class="btn sci" onclick="appendConstant('pi')">π</button>
+                <button class="btn sci" onclick="appendConstant('e')">e</button>
+                <button class="btn sci" onclick="appendToDisplay('!')">x!</button>
+            </div>
+
+            <!-- Row 4: Numbers & Basic Operators -->
+            <div class="button-row">
+                <button class="btn num" onclick="appendToDisplay('7')">7</button>
+                <button class="btn num" onclick="appendToDisplay('8')">8</button>
+                <button class="btn num" onclick="appendToDisplay('9')">9</button>
+                <button class="btn op" onclick="appendToDisplay('/')">/</button>
+                <button class="btn op" onclick="appendToDisplay('*')">×</button>
+                <button class="btn op" onclick="appendToDisplay('^')">^</button>
+                <button class="btn op" onclick="appendToDisplay('%')">%</button>
+                <button class="btn paren" onclick="appendToDisplay('(')">(</button>
+            </div>
+
+            <!-- Row 5: Numbers & Operators -->
+            <div class="button-row">
+                <button class="btn num" onclick="appendToDisplay('4')">4</button>
+                <button class="btn num" onclick="appendToDisplay('5')">5</button>
+                <button class="btn num" onclick="appendToDisplay('6')">6</button>
+                <button class="btn op" onclick="appendToDisplay('+')">+</button>
+                <button class="btn op" onclick="appendToDisplay('-')">-</button>
+                <button class="btn comma" onclick="appendToDisplay(',')">,</button>
+                <button class="btn var" onclick="appendToDisplay('x')">x</button>
+                <button class="btn var" onclick="appendToDisplay('y')">y</button>
+            </div>
+
+            <!-- Row 6: Numbers & Variables -->
+            <div class="button-row">
+                <button class="btn num" onclick="appendToDisplay('1')">1</button>
+                <button class="btn num" onclick="appendToDisplay('2')">2</button>
+                <button class="btn num" onclick="appendToDisplay('3')">3</button>
+                <button class="btn num zero" onclick="appendToDisplay('0')">0</button>
+                <button class="btn num" onclick="appendToDisplay('.')">.</button>
+                <button class="btn assign" onclick="prepareAssignment()">STO→</button>
+                <button class="btn equals" onclick="calculate()">=</button>
+                <button class="btn paren" onclick="appendToDisplay(')')">)</button>
+            </div>
+
+            <!-- Row 7: Increment/Decrement & Utility -->
+            <div class="button-row">
+                <button class="btn func" onclick="appendToDisplay('inc(')">inc</button>
+                <button class="btn func" onclick="appendToDisplay('dec(')">dec</button>
+                <button class="btn custom" onclick="toggleCustomInput()">Custom</button>
+                <button class="btn history-btn" onclick="toggleHistory()">History</button>
+                <button class="btn vars-btn" onclick="toggleVariables()">Variables</button>
+                <button class="btn clear-vars" onclick="clearVariables()">Clear Vars</button>
+                <button class="btn clear-history" onclick="clearHistory()">Clear History</button>
+            </div>
+        </div>
+
+        <!-- Custom Input Section -->
+        <div class="custom-section" id="customSection">
+            <div class="section-header">
+                <h3>Custom Expression & Variable Management</h3>
+                <button class="close-btn" onclick="toggleCustomInput()">×</button>
+            </div>
+            <div class="custom-content">
+                <div class="custom-input-group">
+                    <h4>Single Expression</h4>
+                    <div class="input-row">
+                        <input type="text" id="customExpr" placeholder="Type expression (e.g., 6*8, x=5, x*y+2)">
+                        <button onclick="calculateCustom()">Calculate</button>
+                    </div>
+                </div>
+                
+                <div class="custom-input-group">
+                    <h4>Two Expressions (Execute Sequentially)</h4>
+                    <div class="input-row">
+                        <input type="text" id="expr1" placeholder="First expression (e.g., x=5)">
+                        <input type="text" id="expr2" placeholder="Second expression (e.g., y=x*2)">
+                        <button onclick="calculateTwoExpressions()">Calculate Both</button>
+                    </div>
+                </div>
+                
+                <div class="custom-input-group">
+                    <h4>Quick Variable Assignment</h4>
+                    <div class="input-row">
+                        <input type="text" id="varName" placeholder="Variable name (e.g., x)">
+                        <input type="text" id="varValue" placeholder="Value (e.g., 10)">
+                        <button onclick="assignVariable()">Assign</button>
+                    </div>
+                </div>
+                
+                <div class="custom-input-group">
+                    <h4>Variable Operations</h4>
+                    <div class="variable-operations">
+                        <button class="btn-small" onclick="editSelectedVariable()">Edit Selected</button>
+                        <button class="btn-small" onclick="deleteSelectedVariable()">Delete Selected</button>
+                        <button class="btn-small" onclick="clearAllVariables()">Clear All</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="history-section" id="historySection">
+            <div class="section-header">
+                <h3>Calculation History</h3>
+                <div>
+                    <button class="clear-btn" onclick="clearHistory()">Clear All</button>
+                    <button class="close-btn" onclick="toggleHistory()">×</button>
+                </div>
+            </div>
+            <div class="history" id="history">
+                <div class="history-item">Ready to calculate!</div>
+            </div>
+        </div>
+
+        <!-- Variables Section -->
+        <div class="variables-section" id="variablesSection">
+            <div class="section-header">
+                <h3>Stored Variables</h3>
+                <div>
+                    <button class="clear-btn" onclick="clearAllVariables()">Clear All</button>
+                    <button class="close-btn" onclick="toggleVariables()">×</button>
+                </div>
+            </div>
+            <div class="variables" id="variables">
+                <div class="var-item">
+                    <span class="var-name">pi</span>
+                    <span class="var-value">3.14159</span>
+                </div>
+                <div class="var-item">
+                    <span class="var-name">e</span>
+                    <span class="var-value">2.71828</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeHelp()">&times;</span>
+            <h2>Scientific Calculator Help</h2>
+            <div class="help-content">
+                <div class="help-section">
+                    <h3>Basic Operations</h3>
+                    <p>+ (Addition), - (Subtraction), × (Multiplication), / (Division), ^ (Power), % (Modulus), x! (Factorial)</p>
+                </div>
+                <div class="help-section">
+                    <h3>Scientific Functions</h3>
+                    <p>sin (Sine), cos (Cosine), tan (Tangent), log (Log base 10), ln (Natural Log), 
+                       √ (Square Root), exp (Exponential), abs (Absolute Value), pow (Power), 
+                       INT (Integer Part), MOD (Modulus), INV (Inverse), ROUND (Round)</p>
+                </div>
+                <div class="help-section">
+                    <h3>New Functions</h3>
+                    <p>inc(x) - Increment: x + 1<br>
+                       dec(x) - Decrement: x - 1</p>
+                </div>
+                <div class="help-section">
+                    <h3>Constants & Variables</h3>
+                    <p>• Click π to insert pi (3.14159...)<br>
+                       • Click e to insert e (2.71828...)<br>
+                       • Use x, y buttons for quick variable input<br>
+                       • Use STO→ to store result in variable</p>
+                </div>
+                <div class="help-section">
+                    <h3>Custom Section Features</h3>
+                    <p>• Single expression calculation<br>
+                       • Two expressions calculation (executed sequentially)<br>
+                       • Quick variable assignment<br>
+                       • Edit/Delete variables with selection</p>
+                </div>
+                <div class="help-section">
+                    <h3>Examples</h3>
+                    <p>• 2 + 3 × 4 = 14<br>
+                       • sin(30) = 0.5 (in DEG mode)<br>
+                       • x=5, then x*2 = 10<br>
+                       • inc(5) = 6, dec(5) = 4<br>
+                       • Two expressions: x=5 then y=x*2 gives y=10</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
